@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="#003322"/>
+  
+  <!-- Optical illusion E made of repeating patterns -->
+  <g transform="translate(60,40)">
+    <!-- Vertical line illusions -->
+    <g id="verticalLines">
+      <rect x="0" y="0" width="10" height="120" fill="#FF69B4" />
+      <rect x="0" y="0" width="10" height="120" fill="#00FF99" transform="translate(5,5)" />
+      <rect x="0" y="0" width="10" height="120" fill="#FF1493" transform="translate(10,10)" />
+    </g>
+    
+    <!-- Horizontal line illusions - top -->
+    <g id="horizontalTop">
+      <rect x="0" y="0" width="80" height="10" fill="#FF69B4" />
+      <rect x="0" y="0" width="80" height="10" fill="#00FF99" transform="translate(5,5)" />
+      <rect x="0" y="0" width="80" height="10" fill="#FF1493" transform="translate(10,10)" />
+    </g>
+    
+    <!-- Horizontal line illusions - middle -->
+    <g id="horizontalMiddle" transform="translate(0,55)">
+      <rect x="0" y="0" width="60" height="10" fill="#FF69B4" />
+      <rect x="0" y="0" width="60" height="10" fill="#00FF99" transform="translate(5,5)" />
+      <rect x="0" y="0" width="60" height="10" fill="#FF1493" transform="translate(10,10)" />
+    </g>
+    
+    <!-- Horizontal line illusions - bottom -->
+    <g id="horizontalBottom" transform="translate(0,110)">
+      <rect x="0" y="0" width="80" height="10" fill="#FF69B4" />
+      <rect x="0" y="0" width="80" height="10" fill="#00FF99" transform="translate(5,5)" />
+      <rect x="0" y="0" width="80" height="10" fill="#FF1493" transform="translate(10,10)" />
+    </g>
+  </g>
+  
+  <!-- Add subtle rotating circles in background for extra illusion -->
+  <g opacity="0.15">
+    <circle cx="100" cy="100" r="70" stroke="#00FF99" fill="none" stroke-width="2" transform="rotate(0 100 100)"/>
+    <circle cx="100" cy="100" r="65" stroke="#FF69B4" fill="none" stroke-width="2" transform="rotate(30 100 100)"/>
+    <circle cx="100" cy="100" r="60" stroke="#00FF99" fill="none" stroke-width="2" transform="rotate(60 100 100)"/>
+  </g>
+  
+  <!-- Add subtle pulsing dots at intersections -->
+  <g fill="#FF69B4" opacity="0.8">
+    <circle cx="70" cy="50" r="2"/>
+    <circle cx="70" cy="105" r="2"/>
+    <circle cx="70" cy="160" r="2"/>
+    <circle cx="140" cy="50" r="2"/>
+    <circle cx="120" cy="105" r="2"/>
+    <circle cx="140" cy="160" r="2"/>
+  </g>
+</svg>

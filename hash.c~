@@ -1,0 +1,105 @@
+#include "hash.h"
+#include <string.h>
+#include <stdio.h>
+
+void sha512(const uint8_t* data, size_t len, uint8_t* hash) {
+    SHA512_CTX ctx;
+    SHA512_Init(&ctx);
+    SHA512_Update(&ctx, data, len);
+    SHA512_Final(hash, &ctx);
+}
+
+void double_sha512(const uint8_t* data, size_t len, uint8_t* hash) {
+    uint8_t first_hash[HASH_SIZE];
+    
+    // First SHA512
+    SHA512_CTX ctx;
+    SHA512_Init(&ctx);
+    SHA512_Update(&ctx, data, len);
+    SHA512_Final(first_hash, &ctx);
+    
+    // Second SHA512
+    SHA512_Init(&ctx);
+    SHA512_Update(&ctx, first_hash, HASH_SIZE);
+    SHA512_Final(hash, &ctx);
+}
+
+int check_hash_meets_target(const uint8_t* hash, const uint8_t* target) {
+    // Compare from most significant byte to least
+    for (int i = 0; i < HASH_SIZE; i++) {
+        if (hash[i] < target[i]) return 1;  // Hash is below target
+        if (hash[i] > target[i]) return 0;  // Hash is above target
+    }
+    return 1;  // Hashes are equal (meets target)
+}
+
+void hash_to_string(const uint8_t* hash, char* string) {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        sprintf(string + (i * 2), "%02x", hash[i]);
+    }
+    string[HASH_SIZE * 2] = '\0';
+}
+
+int compare_hashes(const uint8_t* a, const uint8_t* b) {
+    return memcmp(a, b, HASH_SIZE);
+}
+
+// Mining utility functions
+void bits_to_target(uint32_t bits, uint8_t* target) {
+    // Convert difficulty bits to target array
+    memset(target, 0, HASH_SIZE);
+    
+    // Extract exponent and coefficient
+    int size = bits >> 24;
+    uint32_t word = bits & 0x007fffff;
+    
+    if (size <= HASH_SIZE) {
+        // Fill in the appropriate bytes
+        for (int i = 0; i < 3; i++) {
+            if (size - i > 0) {
+                target[size - i - 1] = word & 0xff;
+                word >>= 8;
+            }
+        }
+    }
+}
+
+uint32_t target_to_bits(const uint8_t* target) {
+    int size = HASH_SIZE;
+    uint32_t word = 0;
+    
+    // Find first non-zero byte
+    while (size > 0 && target[size - 1] == 0) {
+        size--;
+    }
+    
+    if (size <= 3) {
+        // Convert up to 3 bytes to word
+        for (int i = 0; i < size; i++) {
+            word = (word << 8) | target[i];
+        }
+        return (size << 24) | word;
+    }
+    
+    // Take first 3 bytes for word
+    word = (target[size - 3] << 16) | 
+           (target[size - 2] << 8) | 
+            target[size - 1];
+    
+    return (size << 24) | word;
+}
+
+// Hash verification for mining
+bool verify_pow_hash(const BlockHeader* header, const uint8_t* target) {
+    uint8_t header_bytes[146];  // Size for SHA512 block header
+    uint8_t hash[HASH_SIZE];
+    
+    // Serialize header
+    serialize_block_header(header, header_bytes);
+    
+    // Compute double SHA512
+    double_sha512(header_bytes, 146, hash);
+    
+    // Check if hash meets target
+    return check_hash_meets_target(hash, target);
+}
